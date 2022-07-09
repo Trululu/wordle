@@ -1,26 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateGameDto } from './dto/create-game.dto';
-import { UpdateGameDto } from './dto/update-game.dto';
+import { DictionaryService } from '../dictionary/dictionary.service';
+import { lang } from '../dictionary/types';
 
 @Injectable()
 export class GameService {
-  create(createGameDto: CreateGameDto) {
-    return 'This action adds a new game';
-  }
-
-  findAll() {
-    return `This action returns all game`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} game`;
-  }
-
-  update(id: number, updateGameDto: UpdateGameDto) {
-    return `This action updates a #${id} game`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} game`;
+  constructor(private dictionaryService: DictionaryService) {}
+  async word(lang: lang) {
+    return await this.dictionaryService.getWord(lang);
   }
 }

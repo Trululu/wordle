@@ -1,17 +1,14 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { JwtAuthGuard } from '@app/common-modules';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { GameService } from './game.service';
 
 @Controller('game-wordle')
 export class GameController {
   constructor(private readonly gameService: GameService) {}
 
-  @Get()
-  findAll() {
-    return this.gameService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.gameService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  attempt() {
+    return this.gameService.word('es');
   }
 }
