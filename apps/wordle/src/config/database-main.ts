@@ -2,8 +2,13 @@ import { registerAs } from '@nestjs/config';
 import { config as dotenv } from 'dotenv';
 dotenv();
 
-const { WORDLE_DB_HOST, WORDLE_DB_PORT, WORDLE_DB_USER, WORDLE_DB_PASSWORD } =
-  process.env;
+const {
+  WORDLE_DB_HOST,
+  WORDLE_DB_PORT,
+  WORDLE_DB_USER,
+  WORDLE_DB_PASSWORD,
+  NODE_ENV,
+} = process.env;
 
 export default registerAs('database.main', () => ({
   type: 'postgres',
@@ -12,4 +17,5 @@ export default registerAs('database.main', () => ({
   username: WORDLE_DB_USER,
   password: WORDLE_DB_PASSWORD,
   autoLoadEntities: true,
+  synchronize: NODE_ENV == 'develop',
 }));
