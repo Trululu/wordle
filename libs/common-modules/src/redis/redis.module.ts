@@ -10,8 +10,9 @@ export class RedisModule {
       module: RedisModule,
       imports: [
         Redis.forRootAsync({
-          useFactory: (configService: ConfigService) =>
-            configService.get(param),
+          useFactory: (configService: ConfigService) => ({
+            url: configService.get(param),
+          }),
           inject: [ConfigService],
         }),
       ],
