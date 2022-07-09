@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: wordle
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: node:14-alpine
+    command: npm run start:debug
+    depends_on:
+      - db
+      - rabbitmq
+    networks:
+      - wordle
+      - rmq
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - APP_PORT=${APP_PORT}
+      - WORDLE_DB_HOST=${WORDLE_DB_HOST}
+      - WORDLE_DB_PORT=${WORDLE_DB_PORT}
+      - WORDLE_DB_USER=${WORDLE_DB_USER}
+      - WORDLE_DB_PASSWORD=${WORDLE_DB_PASSWORD}
+      - WORDLE_DB_NAME=${WORDLE_DB_NAME}
+      - MESSAGE_BROKER_URL=${MESSAGE_BROKER_URL}
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - 5673:5672
+      - 15673:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - rmq
+  wordle-db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+
+networks:
+  wordle:
+    driver: bridge
+  rmq:
+    external: true

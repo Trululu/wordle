@@ -1,0 +1,48 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/wordle/src",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/wordle/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/wordle",
+  "projects": {
+    "wordle": {
+      "type": "application",
+      "root": "apps/wordle",
+      "entryFile": "main",
+      "sourceRoot": "apps/wordle/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/wordle/tsconfig.app.json"
+      }
+    },
+    "auth": {
+      "type": "application",
+      "root": "apps/auth",
+      "entryFile": "main",
+      "sourceRoot": "apps/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/auth/tsconfig.app.json"
+      }
+    },
+    "common-modules": {
+      "type": "library",
+      "root": "libs/common-modules",
+      "entryFile": "index",
+      "sourceRoot": "libs/common-modules/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/common-modules/tsconfig.lib.json"
+      }
+    },
+    "game": {
+      "type": "library",
+      "root": "libs/game",
+      "entryFile": "index",
+      "sourceRoot": "libs/game/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/game/tsconfig.lib.json"
+      }
+    }
+  }
+}
