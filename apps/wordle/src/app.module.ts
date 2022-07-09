@@ -15,7 +15,7 @@ import { DictionaryModule } from './modules/dictionary/dictionary.module';
     TypeormConnectionModule.create('database.main'),
     GameModule,
     DictionaryModule,
-    RedisModule.create('redis'),
+    RedisModule.create('redis.url'),
   ],
 })
 export class AppModule {}
