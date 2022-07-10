@@ -8,7 +8,7 @@ import { Response } from 'express';
 export class RefreshTokenService {
   constructor(private jwtService: JwtService, private config: ConfigService) {}
 
-  async sign(user: IUser, res: Response) {
+  async sign(user: IUser | any, res: Response) {
     res.cookie(
       'jwt-refresh-token',
       this.jwtService.sign(user, {
@@ -16,6 +16,9 @@ export class RefreshTokenService {
         algorithm: this.config.get('auth.refresh_token').signOptions.algorithm,
         expiresIn: this.config.get('auth.refresh_token').signOptions.expiresIn,
       }),
+      {
+        httpOnly: true,
+      },
     );
   }
 }

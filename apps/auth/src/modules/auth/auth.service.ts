@@ -47,12 +47,30 @@ export class AuthService {
     return this.sendTokens({ id: user.id, username: user.username }, res);
   }
 
-  async login(user: IUser, res: Response) {
-    return this.sendTokens(user, res);
+  async refreshAccessToken(user: IUser) {
+    const storedUser = await this.authRepo.findOneBy({ id: user.id });
+    return {
+      access_token: await this.accessTokenService.sign({
+        id: storedUser.id,
+        username: storedUser.username,
+      }),
+    };
   }
 
-  async sendTokens(user: IUser, res: Response) {
-    this.refreshTokenService.sign(user, res);
+  async login(user: IUser, res: Response) {
+    return await this.sendTokens(user, res);
+  }
+
+  async logOut(res: Response) {
+    res.cookie('jwt-refresh-token', '', {
+      httpOnly: true,
+    });
+
+    return { access_token: '' };
+  }
+
+  async sendTokens(user: IUser | any, res: Response) {
+    await this.refreshTokenService.sign(user, res);
     return {
       access_token: await this.accessTokenService.sign(user),
     };

@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { MainModule } from './main.module';
+import * as cookieParser from 'cookie-parser';
 
 const logger = new Logger('AUTH APP TS', { timestamp: true });
 
@@ -10,7 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(MainModule);
   const config = app.get(ConfigService);
   app.enableCors();
-
+  app.use(cookieParser());
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
 
