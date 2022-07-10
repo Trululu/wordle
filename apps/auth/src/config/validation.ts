@@ -7,4 +7,9 @@ export const validationSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid('develop', 'production', 'test')
     .default('develop'),
+  AUTH_DB_HOST: Joi.string().required(),
+  AUTH_DB_PORT: Joi.string().required(),
+  AUTH_DB_USER: Joi.string().required(),
+  AUTH_DB_PASSWORD: Joi.string().required(),
+  AUTH_DB_NAME: Joi.string().required(),
 });
