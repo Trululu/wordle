@@ -1,4 +1,3 @@
-import { RedisCacheService } from '@app/common-modules';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,14 +12,9 @@ export class DictionaryService {
     private readonly httpService: HttpService,
     @InjectRepository(Dictionary)
     private directoryRepo: Repository<Dictionary>,
-    private readonly redisCacheService: RedisCacheService,
   ) {}
 
-  async getWord(lang: string) {
-    const cachedWord = await this.redisCacheService.get(`word.${lang}`);
-    if (cachedWord) {
-      return cachedWord;
-    }
+  async getWord(lang: string): Promise<Dictionary> {
     const data = await this.directoryRepo
       .createQueryBuilder('word')
       .where('word.lang = :lang', { lang })
@@ -28,7 +22,6 @@ export class DictionaryService {
       .limit(1)
       .getOne();
     this.logger.log(`sending word ${JSON.stringify(data)}`);
-    await this.redisCacheService.set('word.es', data);
     return data;
   }
 

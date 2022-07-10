@@ -9,8 +9,10 @@ export class RedisCacheService {
     return await this.cache.get(key);
   }
 
-  public async set(key: string, value: any) {
-    await this.cache.set(key, value);
+  public async set(key: string, value: any, ttl: number = 60 * 5) {
+    await this.cache.set(key, value, {
+      ttl,
+    });
   }
   public async del(key: string) {
     await this.cache.del(key);

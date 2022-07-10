@@ -4,3 +4,4 @@ export * from './modules/redis';
 export * from './middlewares/filters';
 export * from './middlewares/guards';
 export * from './modules/auth/auth.module';
+export * from './modules/auth/types';

@@ -4,14 +4,10 @@ import { DictionaryController } from './dictionary.controller';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Dictionary } from './entities/dictionary.entity';
-import { RedisCacheModule } from '@app/common-modules';
+import { Game } from '../game/entities/game.entity';
 
 @Module({
-  imports: [
-    HttpModule,
-    TypeOrmModule.forFeature([Dictionary]),
-    RedisCacheModule.create('redis.cache'),
-  ],
+  imports: [HttpModule, TypeOrmModule.forFeature([Dictionary, Game])],
   controllers: [DictionaryController],
   providers: [DictionaryService],
   exports: [DictionaryService],
