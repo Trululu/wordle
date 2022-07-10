@@ -9,6 +9,7 @@ import {
   Response,
   Get,
 } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   Request as ExpressRequest,
   Response as ExpressResponse,
@@ -16,12 +17,19 @@ import {
 import { LocalAuthGuard } from '../../middlewares/guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
+  @ApiResponse({
+    status: 201,
+    description: 'Login user',
+    type: LoginResponseDto,
+  })
   @Post('login')
   async login(
     @Request() req,
@@ -31,6 +39,11 @@ export class AuthController {
   }
 
   @Post('register')
+  @ApiResponse({
+    status: 201,
+    description: 'Register a user',
+    type: LoginResponseDto,
+  })
   async register(
     @Body() dto: CreateAuthDto,
     @Response({ passthrough: true }) res: ExpressResponse,
@@ -40,11 +53,21 @@ export class AuthController {
 
   @UseGuards(JwtRefreshTokenGuard)
   @Get('session')
+  @ApiResponse({
+    status: 201,
+    description: 'Get a new access token',
+    type: LoginResponseDto,
+  })
   getCurrentSesion(@Request() req: ExpressRequest) {
     return this.authService.refreshAccessToken(<IUser>req.user);
   }
 
   @Get('log-out')
+  @ApiResponse({
+    status: 201,
+    description: 'destroys the session',
+    type: LoginResponseDto,
+  })
   logOut(@Response({ passthrough: true }) res: ExpressResponse) {
     return this.authService.logOut(res);
   }
