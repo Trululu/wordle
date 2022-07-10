@@ -28,6 +28,12 @@ run `npm i`
 
 if there is not certs in certs folder run `node apps/auth/scripts/genAuthCerts.js`
 
+## Docs
+
+can load postman files at /postman and test the api
+
+entering at ${HOST}:${PORT}/api-docs to see swagger docs on each microservice (wordle || auth)
+
 ## Running with Docker
 
 - docker-compose build
@@ -36,7 +42,3 @@ if there is not certs in certs folder run `node apps/auth/scripts/genAuthCerts.j
 ## test api
 
 npm run test
-
-### Postman
-
-can load postman files at /postman
