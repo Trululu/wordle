@@ -16,8 +16,9 @@ import {
 } from 'express';
 import { LocalAuthGuard } from '../../middlewares/guards/local-auth.guard';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { RegisterAuthDto } from './dto/register.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { LoginAuthDto } from './dto/login.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -32,6 +33,7 @@ export class AuthController {
   })
   @Post('login')
   async login(
+    @Body() dto: LoginAuthDto,
     @Request() req,
     @Response({ passthrough: true }) res: ExpressResponse,
   ) {
@@ -45,7 +47,7 @@ export class AuthController {
     type: LoginResponseDto,
   })
   async register(
-    @Body() dto: CreateAuthDto,
+    @Body() dto: RegisterAuthDto,
     @Response({ passthrough: true }) res: ExpressResponse,
   ) {
     return this.authService.register(dto, res);

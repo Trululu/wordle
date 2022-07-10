@@ -5,28 +5,31 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+import axios from 'axios';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
-
-  catch(exception: unknown, host: ArgumentsHost): void {
-    const { httpAdapter } = this.httpAdapterHost;
-
+  async catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    console.log(exception);
-    const httpStatus =
+    const response = ctx.getResponse();
+    if (axios.isAxiosError(exception)) {
+      return response.status(exception.response.status).json({
+        error_status: exception.response.status,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        ...exception.response.data,
+      });
+    }
+    const status =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
+    let resp: any = { error_message: exception.toString() };
 
-    const responseBody = {
-      statusCode: httpStatus,
-      timestamp: new Date().toISOString(),
-      path: httpAdapter.getRequestUrl(ctx.getRequest()),
-    };
+    if (exception instanceof HttpException) {
+      resp = exception.getResponse();
+    }
 
-    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+    return response.status(status).json(resp);
   }
 }

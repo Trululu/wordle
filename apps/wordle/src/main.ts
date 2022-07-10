@@ -1,7 +1,7 @@
 import { AllExceptionsFilter } from '@app/common-modules';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
@@ -23,9 +23,8 @@ async function bootstrap() {
   app.enableCors();
   app.use(cookieParser());
 
-  const httpAdapter = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
-
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(config.getOrThrow('app.port'), () => {
     logger.log(`app running on port ${config.getOrThrow('app.port')}`);
   });

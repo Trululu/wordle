@@ -7,3 +7,4 @@ export * from './modules/auth/auth.module';
 export * from './modules/auth/types';
 export * from './modules/auth/access-token';
 export * from './modules/auth/refresh-token';
+export * from './decorators/match';

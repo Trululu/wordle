@@ -8,7 +8,7 @@ import {
   IUser,
   RefreshTokenService,
 } from '@app/common-modules';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { RegisterAuthDto } from './dto/register.dto';
 import { Response } from 'express';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class AuthService {
     };
   }
 
-  async register(dto: CreateAuthDto, res: Response) {
+  async register(dto: RegisterAuthDto, res: Response) {
     if (dto.confirmPassword !== dto.password) {
       throw new Error('invalid password');
     }
