@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { HealthCheckDto } from './dto/HealthCheckDto.dto';
+import { HealthCheckDto } from './dto/healthCheckDto.dto';
 import { HealthCheckService } from './health-check.service';
 
 @ApiTags('health-check')

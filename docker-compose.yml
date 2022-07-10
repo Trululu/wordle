@@ -1,19 +1,20 @@
 version: '3.8'
 
 services:
-  api:
+  wordle-api:
     container_name: wordle
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.wordle
+      args:
+        APP: wordle
     image: node:14-alpine
-    command: npm run start:debug
     depends_on:
-      - db
-      - rabbitmq
+      - wordle-db
+      - redis
     networks:
       - wordle
-      - rmq
+      - redis
     environment:
       - NODE_ENV=${NODE_ENV}
       - APP_PORT=${APP_PORT}
@@ -22,23 +23,34 @@ services:
       - WORDLE_DB_USER=${WORDLE_DB_USER}
       - WORDLE_DB_PASSWORD=${WORDLE_DB_PASSWORD}
       - WORDLE_DB_NAME=${WORDLE_DB_NAME}
-      - MESSAGE_BROKER_URL=${MESSAGE_BROKER_URL}
+      - APP_REDIS=${APP_REDIS}
     ports:
-      - 3000:3000
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-  rabbitmq:
-    image: rabbitmq:3.8-management-alpine
-    container_name: 'rabbitmq'
-    ports:
-      - 5673:5672
-      - 15673:15672
-    volumes:
-      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
-      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+      - ${APP_PORT}:${APP_PORT}
+  wordle-auth:
+    build:
+      context: .
+      dockerfile: Dockerfile.auth
+    image: node:14-alpine
+    depends_on:
+      - auth-db
+      - redis
     networks:
-      - rmq
+      - wordle_auth
+      - redis
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - AUTH_PORT=${AUTH_PORT}
+      - AUTH_DB_HOST=${AUTH_DB_HOST}
+      - AUTH_DB_PORT=${AUTH_DB_PORT}
+      - AUTH_DB_USER=${AUTH_DB_USER}
+      - AUTH_DB_PASSWORD=${AUTH_DB_PASSWORD}
+      - AUTH_DB_NAME=${AUTH_DB_NAME}
+      - APP_REDIS=${APP_REDIS}
+    ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
   wordle-db:
     image: postgres:14.1-alpine
     restart: always
@@ -47,11 +59,28 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - '5432:5432'
-    volumes:
-      - db:/var/lib/postgresql/data
-
+    networks:
+      - wordle
+  auth-db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - '5433:5432'
+    networks:
+      - wordle_auth
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - 6379:6379
+    networks:
+      - redis
 networks:
+  wordle_auth:
+    driver: bridge
   wordle:
     driver: bridge
-  rmq:
-    external: true
+  redis:
+    driver: bridge

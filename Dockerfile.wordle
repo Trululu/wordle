@@ -1,0 +1,16 @@
+FROM node:14.16.0
+
+WORKDIR /usr/src/wordle
+
+COPY package.json .
+
+
+RUN npm install --only=development
+RUN npm install argon2 --build-from-source
+RUN npm i @nestjs/cli -g
+
+COPY . .
+
+RUN nest build wordle
+
+CMD ["nest","start","wordle"]
